@@ -69,13 +69,17 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
 
   private void Update()
-   {
-    HandleMovement();
+   {    
     HandleInteraction();
    }
 
+    private void FixedUpdate()
+    {
+        HandleMovement();
+    }
 
-  void GameInput_OnInteract(object sender, EventArgs eventArgs)    //as the delegate was of type EventArgs so we have to make two paremeter inside that method
+
+    void GameInput_OnInteract(object sender, EventArgs eventArgs)    //as the delegate was of type EventArgs so we have to make two paremeter inside that method
    {
      if (!GameManager.Instance.IsGamePlaying()) return;  // if the state of game is NOT game Playing do not execute further code
 
@@ -142,11 +146,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     Vector3 movDirZ = new Vector3(0, 0, movDir.z).normalized;
     
     Vector3 endPoint = transform.position + Vector3.up * bodyHeight;                            //position of this gameobject is its base while we move up from base 2 units to reach its height
-    bool canMove = !Physics.CapsuleCast(transform.position, endPoint, bodyRadius, movDir, playerSpeed * Time.deltaTime);
+    bool canMove = !Physics.CapsuleCast(transform.position, endPoint, bodyRadius, movDir, playerSpeed * Time.fixedDeltaTime);
     
     if (!canMove)       //mean we have hit something lets check if we can move on x axis for this we will direction dedicated for x-axis
     {
-      canMove = movDir.x != 0 && !Physics.CapsuleCast(transform.position, endPoint, bodyRadius, movDirX, playerSpeed* Time.deltaTime, layerMaskForCounters);
+      canMove = movDir.x != 0 && !Physics.CapsuleCast(transform.position, endPoint, bodyRadius, movDirX, playerSpeed* Time.fixedDeltaTime, layerMaskForCounters);
 
       if (canMove)
       {
@@ -167,11 +171,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     if (canMove)
     {
-      transform.position += movDir * playerSpeed * Time.deltaTime;
+      transform.position += movDir * playerSpeed * Time.fixedDeltaTime;
     }
     
     float playerRotation = 10f;
-    transform.forward = Vector3.Slerp(transform.forward, movDir , Time.deltaTime * playerRotation);       //this line is for the rotation of the body when its moving and rotating it on the same direction where moving
+    transform.forward = Vector3.Slerp(transform.forward, movDir , Time.fixedDeltaTime * playerRotation);       //this line is for the rotation of the body when its moving and rotating it on the same direction where moving
    }
 
 
